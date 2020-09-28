@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import { GetPokemonList } from "../actions/pokemonActions";
+import { GetPokemonList, removeItem } from "../actions/pokemonActions";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { pokemon } from "../pokemon.jpg";
 import styled from "styled-components";
+import { Card, Tooltip } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 
+const { Meta } = Card;
 const PokemonList = (props) => {
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const pokemonList = useSelector((state) => state.PokemonList);
+  // const [array, setArray] = useState([]);
   React.useEffect(() => {
     FetchData(1);
   }, []);
@@ -19,35 +23,32 @@ const PokemonList = (props) => {
     dispatch(GetPokemonList(page));
   };
 
-  const removeTodo = (name) => {
-    debugger;
-    pokemonList.data.filter((el) => el !== name);
+  const removePokemon = (index) => {
+    debugger
+    dispatch(removeItem(index));
   };
   console.log(pokemonList);
   const ShowData = () => {
     if (!_.isEmpty(pokemonList.data)) {
       return (
         <>
-          {pokemonList.data.map((el) => {
+          {pokemonList.data.map((el, i) => {
             return (
-              <div className="card">
-                <p>{el.name.toUpperCase()}</p>
-                <button
-                  onClick={() => {
-                    removeTodo(el.name);
-                  }}
-                  key={el}
-                >
-                  x
-                </button>
-                <div className="img-container p-5">
-                  <Link to={`/pokemon/${el.name}`}>
-                    <img
-                      style={{ width: 200, height: 200 }}
-                      src={`https://img.pokemondb.net/sprites/omega-ruby-alpha-sapphire/dex/normal/${el.name}.png`}
-                    />{" "}
-                  </Link>
-                </div>
+              <div className='cardItem' >
+                <Link to={`/pokemon/${el.name}`}>
+                  <Card
+                    hoverable
+                    style={{ width: 100 }}
+                    cover={<img alt="example" src={`https://img.pokemondb.net/sprites/omega-ruby-alpha-sapphire/dex/normal/${el.name}.png`} />}
+                    extra={<div style={{ justifyContent: "flex-end", marginLeft: "160px" }}>
+                      <CloseOutlined onClick={() => {
+                        removePokemon(i);
+                      }} />
+                    </div>}
+                  >
+                    <p>{el.name.toUpperCase()}</p>
+                  </Card>
+                </Link>
               </div>
             );
           })}
@@ -63,7 +64,7 @@ const PokemonList = (props) => {
   };
 
   return (
-    <>
+    <div style={{ justifyContent: "center" }}>
       <NavWrapper>
         <img
           src={pokemon}
@@ -75,37 +76,45 @@ const PokemonList = (props) => {
           <li className="nav-item ml-5">Pokemon Api</li>
         </ul>
       </NavWrapper>
-      <div>
-        <div className="py=5">
-          <div className="container">
-            <input
-              className="align-items-center"
-              type="text"
-              placeholder="Search Pokemons"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <button onClick={() => props.history.push(`/pokemon/${search}`)}>
-              Search
-            </button>
-          </div>
-          <Pokemon className="col-9 mx-auto col-md-6 col-lg-3 my-3">
-            <div className="container">
-              {ShowData()}
 
-              {!_.isEmpty(pokemonList.data) && (
-                <ReactPaginate
-                  pageCount={Math.ceil(pokemonList.count / 15)}
-                  pageRangeDisplayed={2}
-                  marginPagesDisplayed={1}
-                  onPageChange={(data) => FetchData(data.selected + 1)}
-                  containerClassName={"pagination"}
-                />
-              )}
-            </div>
-          </Pokemon>
-        </div>
+      <div className="container" style={{padding:"5%",justifyContent:"space-between"}}>
+        <input
+          className="align-items-center"
+          type="text"
+          placeholder="Search "
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button onClick={() => props.history.push(`/pokemon/${search}`)}>
+          By Name
+            </button>
+            <button onClick={() => props.history.push(`/ability/${search}`)}>
+          By Ability
+            </button>
+            <button onClick={() => props.history.push(`/type/${search}`)}>
+            By Type
+            </button>
+            <button onClick={() => props.history.push(`/pokemon-color/${search}`)}>
+            By Color
+            </button>
+            <button onClick={() => props.history.push(`/pokemon-species/${search}`)}>
+            By Species
+            </button>
       </div>
-    </>
+      <div style={{ display: "flex", width: "100%", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
+
+        {ShowData()}
+
+        {!_.isEmpty(pokemonList.data) && (
+          <ReactPaginate
+            pageCount={Math.ceil(pokemonList.count / 15)}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={1}
+            onPageChange={(data) => FetchData(data.selected + 1)}
+            containerClassName={"pagination"}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -119,6 +128,9 @@ const Pokemon = styled.div`
   .card {
     border-color: transparent;
     transition: all 1s linear;
+    width:100%;
+    display:flex;
+    flex-wrap:wrap
   }
   &:hover {
     .card {

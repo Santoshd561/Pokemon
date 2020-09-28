@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetPokemon } from "../actions/pokemonActions";
 import _ from "lodash";
 import "../App.css";
+import { Card, Tooltip } from 'antd';
+const { Meta } = Card;
 
 const Pokemon = (props) => {
   const pokemonName = props.match.params.pokemon;
@@ -17,39 +19,47 @@ const Pokemon = (props) => {
       const pokeData = pokemonState.data[pokemonName];
       console.log(pokeData);
       return (
-        <div className={"Card"} style={{ flex: 1, alignItems: "center" }}>
-          <div className={"Card_img"}>
-            <h1>Sprites</h1>
-            `<img src={pokeData.sprites.front_default} alt="" />`
-            <img src={pokeData.sprites.back_default} alt="" />
-            <img src={pokeData.sprites.front_shiny} alt="" />
-            <img src={pokeData.sprites.back_shiny} alt="" />
-          </div>
-          <div className="Card_types">
-            <h1>Stats</h1>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <Card
+            className='details'
+            hoverable
+            cover={
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                  <img alt="example" src={pokeData.sprites.front_default} width="200" height="200" />
+                  <img alt="example" src={pokeData.sprites.back_default} width="200" height="200" />
+                </div>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
+                  <img alt="example" src={pokeData.sprites.front_shiny} width="200" height="200" />
+                  <img alt="example" src={pokeData.sprites.back_shiny} width="200" height="200" />
+                </div>
+              </div>
+            }
+          >
+          </Card>
+          <Card
+            className='details'
+            hoverable
+          >
+            <Meta title="Stats" style={{ fontSize: "24", margin: "10%" }} />
             {pokeData.stats.map((pokemon, index) => {
               return (
-                // <div
-                //   className="card text-center mx-auto"
-                //   style={{ maxWidth: "18rem" }}
-                //   key={pokemon.id}
-                // >
-                <div className="card-header">
-                  <b>
-                    {pokemon.name} : {pokemon.location_area_encounters}
-                  </b>
-                </div>
+                <p>
+                  {pokemon.base_stat} : {pokemon.effort}
+                </p>
                 // </div>
               );
             })}
-          </div>
-          <div className="Card_info">
-            <h1>Abilities</h1>
+          </Card>
+          <Card
+            className='details'
+            hoverable
+          >
+            <Meta title="Abilities" style={{ fontSize: "24", margin: "10%" }} />
             {pokeData.abilities.map((el) => {
               return <p>{el.ability.name}</p>;
             })}
-          </div>
-          {`${"Weight :"}${pokeData.weight}`}
+          </Card>
         </div>
       );
     }

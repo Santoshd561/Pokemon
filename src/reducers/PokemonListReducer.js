@@ -7,6 +7,10 @@ const DefaultState = {
 
 const PokemonListReducer = (state = DefaultState, action) => {
   switch (action.type) {
+    case "DELETE_LIST_ITEM": 
+      return {
+        data: state.data.filter((l,i) => i !== action.payload),
+    }
     case "POKEMON_LIST_LOADING":
       return {
         ...state,

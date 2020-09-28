@@ -10,6 +10,10 @@ function App() {
       <Switch>
         <Route path={"/"} exact component={PokemonList} />
         <Route path={"/pokemon/:pokemon"} exact component={Pokemon} />
+        <Route path={"/ability/:pokemon"} exact component={Pokemon} />
+        <Route path={"/type/:pokemon"} exact component={Pokemon} />
+        <Route path={"/pokemon-color/:pokemon"} exact component={Pokemon} />
+        <Route path={"/pokemon-species/:pokemon"} exact component={Pokemon} />
         <Redirect to={"/"} />
       </Switch>
     </div>
