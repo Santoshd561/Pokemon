@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import { GetPokemonList, removeItem } from "../actions/pokemonActions";
+import {
+  GetPokemonList,
+  removeItem,
+  GetPokemonListByFilter,
+} from "../actions/pokemonActions";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { pokemon } from "../pokemon.jpg";
 import styled from "styled-components";
-import { Card, Tooltip } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
-
+import { Card, Tooltip } from "antd";
+import { Select } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+const { Option } = Select;
 const { Meta } = Card;
 const PokemonList = (props) => {
   const [search, setSearch] = useState("");
@@ -24,7 +29,7 @@ const PokemonList = (props) => {
   };
 
   const removePokemon = (index) => {
-    debugger
+    debugger;
     dispatch(removeItem(index));
   };
   console.log(pokemonList);
@@ -34,21 +39,35 @@ const PokemonList = (props) => {
         <>
           {pokemonList.data.map((el, i) => {
             return (
-              <div className='cardItem' >
-                <Link to={`/pokemon/${el.name}`}>
-                  <Card
-                    hoverable
-                    style={{ width: 100 }}
-                    cover={<img alt="example" src={`https://img.pokemondb.net/sprites/omega-ruby-alpha-sapphire/dex/normal/${el.name}.png`} />}
-                    extra={<div style={{ justifyContent: "flex-end", marginLeft: "160px" }}>
-                      <CloseOutlined onClick={() => {
-                        removePokemon(i);
-                      }} />
-                    </div>}
-                  >
+              <div className="cardItem">
+                <Card
+                  hoverable
+                  style={{ width: 100 }}
+                  cover={
+                    <img
+                      alt="example"
+                      src={`https://img.pokemondb.net/sprites/omega-ruby-alpha-sapphire/dex/normal/${el.name}.png`}
+                    />
+                  }
+                  extra={
+                    <div
+                      style={{
+                        justifyContent: "flex-end",
+                        marginLeft: "160px",
+                      }}
+                    >
+                      <CloseOutlined
+                        onClick={() => {
+                          removePokemon(i);
+                        }}
+                      />
+                    </div>
+                  }
+                >
+                  <Link to={`/pokemon/${el.name}`}>
                     <p>{el.name.toUpperCase()}</p>
-                  </Card>
-                </Link>
+                  </Link>
+                </Card>
               </div>
             );
           })}
@@ -77,31 +96,51 @@ const PokemonList = (props) => {
         </ul>
       </NavWrapper>
 
-      <div className="container" style={{padding:"5%",justifyContent:"space-between"}}>
+      <div
+        className="container"
+        style={{ padding: "5%", justifyContent: "space-between" }}
+      >
         <input
           className="align-items-center"
           type="text"
           placeholder="Search "
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={() => props.history.push(`/pokemon/${search}`)}>
+        <button
+          onClick={() =>
+            dispatch(GetPokemonListByFilter("ability", search, "1"))
+          }
+        >
           By Name
-            </button>
-            <button onClick={() => props.history.push(`/ability/${search}`)}>
+        </button>
+        <button
+          onClick={() =>
+            dispatch(GetPokemonListByFilter("ability", search, "1"))
+          }
+        >
           By Ability
-            </button>
-            <button onClick={() => props.history.push(`/type/${search}`)}>
-            By Type
-            </button>
-            <button onClick={() => props.history.push(`/pokemon-color/${search}`)}>
-            By Color
-            </button>
-            <button onClick={() => props.history.push(`/pokemon-species/${search}`)}>
-            By Species
-            </button>
+        </button>
+        <button onClick={() => props.history.push(`/type/${search}`)}>
+          By Type
+        </button>
+        <button onClick={() => props.history.push(`/pokemon-color/${search}`)}>
+          By Color
+        </button>
+        <button
+          onClick={() => props.history.push(`/pokemon-species/${search}`)}
+        >
+          By Species
+        </button>
       </div>
-      <div style={{ display: "flex", width: "100%", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
-
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         {ShowData()}
 
         {!_.isEmpty(pokemonList.data) && (
@@ -128,9 +167,9 @@ const Pokemon = styled.div`
   .card {
     border-color: transparent;
     transition: all 1s linear;
-    width:100%;
-    display:flex;
-    flex-wrap:wrap
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
   }
   &:hover {
     .card {
